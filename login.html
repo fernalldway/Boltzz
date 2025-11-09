@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Boltz — Login</title>
+
+  <style>
+    :root{
+      --lime: #b8ff00;
+      --black: #071013;
+      --muted: #9aa0a6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Inter, Poppins, system-ui, Arial;
+    color: var(--lime);
+    background: black;
+    }
+
+    .card{
+      width: 360px;
+    background: #000000b3;
+    border-radius: 14px;
+    padding: 26px;
+    position: relative;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:20px;
+      text-align:center;
+      color:var(--lime);
+      text-shadow: 0 0 10px rgba(184,255,0,0.2);
+    }
+    p.sub{margin:0 0 18px;font-size:13px;color:white;text-align:center}
+
+    input{
+      width:100%;
+      padding:12px;
+      margin:8px 0;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      background: #0b0f10;
+      color: #eafe9a;
+      font-size:14px;
+      outline:none;
+    }
+    input:focus{ box-shadow: 0 0 10px rgba(184,255,0,0.06); border-color: rgba(184,255,0,0.22); }
+
+    .btn{
+      display:inline-block;
+      width:100%;
+      padding:12px;
+      margin-top:12px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+    }
+    .btn-primary{ background:linear-gradient(90deg,var(--lime),#8cff00); color:#071013; box-shadow:0 6px 18px rgba(184,255,0,0.12); }
+    .btn-ghost{ background:transparent;border:1px solid rgba(184,255,0,0.12); color:var(--lime); }
+
+    .spinner{
+      width:36px;height:36px;border-radius:50%;
+      border:4px solid rgba(255,255,255,0.08);
+      border-top-color: var(--lime);
+      animation:spin 1s linear infinite;
+      margin:12px auto;
+      display:none;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    .links{ margin-top:12px; text-align:center; font-size:13px; color:var(--muted); }
+    .links a{ color:var(--lime); text-decoration:none; font-weight:600; }
+
+    /* popup */
+    .popup{
+      position:fixed;
+      left:50%;
+      top:-120px;
+      transform:translateX(-50%);
+      min-width:320px;
+      max-width:92%;
+      background:#111;
+      color:#fff;
+      padding:12px 18px;
+      border-radius:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      border-left:6px solid var(--lime);
+      z-index:9999;
+      opacity:0;
+      transition: top .45s cubic-bezier(.2,.9,.2,1), opacity .45s;
+    }
+    .popup.show{ top:28px; opacity:1; }
+    .popup.success{ border-left-color: #7cf54b; }
+    .popup.error{ border-left-color: #ff0000; }
+    .popup .msg{ font-weight:700; }
+
+    /* small note */
+    .note{ font-size:12px;color:var(--muted); margin-top:8px; text-align:center; }
+
+    /*poor internet connection error*/
+     .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 1.5rem;
+      text-align: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .overlay .message {
+      background: red;
+    padding: 2005px 383px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(255, 59, 48, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
+
+    .overlay img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .restored {
+      background: #34c759 !important;
+      animation: fadeOut 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+  </style>
+</head>
+<body>
+  
+  <div id="networkOverlay" class="overlay hidden">
+    <div class="message" id="networkMessage">
+      <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="No Internet Icon">
+      <span>POOR INTERNET CONNECTION</span>
+    </div>
+  </div>
+
+  <div class="popup" id="popup" role="alert"><span class="msg" id="popupMsg"></span></div>
+
+  <div class="card" role="main" aria-labelledby="title">
+    <h1 id="title">Login</h1>
+    <p class="sub">Sign in to access your dashboard</p>
+
+    <input id="email" type="email" placeholder="Email" autocomplete="username" />
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+
+    <div class="spinner" id="spinner" aria-hidden="true"></div>
+
+    <button id="loginBtn" class="btn btn-primary">Login</button>
+    <button id="forgotBtn" class="btn btn-ghost" style="margin-top:8px;">Forgot password?</button>
+
+    <div class="links">
+      <a href="signup.html">Create account</a>
+      <div class="note" id="noteText">You must verify your email before accessing main.</div>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('networkOverlay');
+    const message = document.getElementById('networkMessage');
+
+    function showDisconnected() {
+      message.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="No Internet Icon"><span>POOR INTERNET CONNECTION</span>';
+      message.classList.remove('restored');
+      overlay.classList.remove('hidden');
+    }
+
+    function showRestored() {
+      message.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Connected Icon"><span>Connection Restored</span>';
+      message.classList.add('restored');
+      setTimeout(() => overlay.classList.add('hidden'), 2000);
+    }
+
+    window.addEventListener('offline', showDisconnected);
+    window.addEventListener('online', showRestored);
+
+    setInterval(() => {
+      if (!navigator.onLine) {
+        showDisconnected();
+      }
+    }, 3000);
+  </script>
+  <script type="module" src="logins.js"></script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boltz - Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background-color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .container {
+      background: #000000;
+    border-radius: 15px;
+    width: 360px;
+    padding: 5rem 3em;
+    text-align: center;
+    }
+
+    h1 {
+      color: #b8ff00;
+      
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 1.6em;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background: #222;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input:focus {
+      border: 1px solid #b8ff00;
+      
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #joinGroup {
+      background: transparent;
+      border: 1px solid #b8ff00;
+      color: #b8ff00;
+    }
+
+    #joinGroup:hover {
+      background: #b8ff00;
+      color: #000;
+    }
+
+    #signupBtn {
+      background: #b8ff00;
+      color: #000;
+      box-shadow: 0 0 10px #b8ff00;
+    }
+
+    #signupBtn:disabled {
+      background: #333;
+      color: #777;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    p {
+      font-size: 13px;
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    #referralDisplay {
+      margin-bottom: 10px;
+      color: #b8ff00;
+      font-size: 14px;
+      text-shadow: 0 0 5px #b8ff00;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 1.5rem;
+      text-align: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .overlay .message {
+      background: red;
+    padding: 2005px 383px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(255, 59, 48, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
+
+    .overlay img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .restored {
+      background: #34c759 !important;
+      animation: fadeOut 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+  </style>
+</head>
+<body>
+  <div id="networkOverlay" class="overlay hidden">
+    <div class="message" id="networkMessage">
+      <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="No Internet Icon">
+      <span>POOR INTERNET CONNECTION</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Signup</h1>
+    <p id="referralDisplay"></p>
+    <form id="signupForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+      <input type="text" id="referralCode" placeholder="Referral Code (Optional)">
+      <button type="button" id="joinGroup">Join WhatsApp Group</button>
+      <button type="submit" id="signupBtn" disabled>Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="login.html" style="color: #b8ff00;">Login</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, updateDoc, increment, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDim9k5CHfNythq6ORypN_RfwyLNMuxVLs",
+      authDomain: "sign-2fd98.firebaseapp.com",
+      projectId: "sign-2fd98",
+      storageBucket: "sign-2fd98.appspot.com",
+      messagingSenderId: "548682903618",
+      appId: "1:548682903618:web:0f0ca286f902c7fbacfddb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const signupForm = document.getElementById('signupForm');
+    const joinBtn = document.getElementById('joinGroup');
+    const signupBtn = document.getElementById('signupBtn');
+    const referralDisplay = document.getElementById('referralDisplay');
+
+    // Get referral code from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      referralDisplay.textContent = `Referral Code: ${refCode}`;
+      document.getElementById('referralCode').value = refCode;
+    }
+
+    let joinedGroup = false;
+    joinBtn.addEventListener('click', () => {
+      window.open('https://whatsapp.com/channel/0029Vb6uT8WAu3aXhCY03p0d', '_blank');
+      joinedGroup = true;
+      signupBtn.disabled = false;
+      joinBtn.textContent = '✅ Joined WhatsApp Group';
+      joinBtn.style.background = 'lime';
+      joinBtn.style.color = '#000';
+    });
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const referralCode = document.getElementById('referralCode').value.trim();
+
+      if (!joinedGroup) return alert('Please join the WhatsApp group first.');
+      if (password !== confirmPassword) return alert('Passwords do not match.');
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Send verification email
+        await sendEmailVerification(user);
+        alert('A verification link has been sent to your email. Please verify to continue.');
+
+        const referralId = Math.random().toString(36).substring(2, 10);
+
+        await setDoc(doc(db, 'users', user.uid), {
+          username,
+          email,
+          referralCode: referralId,
+          referredBy: referralCode || null,
+          balance: 0,
+          joinedGroup: true
+        });
+
+        // Reward referrer ₦50 if valid
+        if (referralCode) {
+          const usersRef = collection(db, 'users');
+          const q = query(usersRef, where('referralCode', '==', referralCode));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const refUser = querySnapshot.docs[0];
+            await updateDoc(doc(db, 'users', refUser.id), {
+              balance: increment(50)
+            });
+          }
+        }
+
+        window.location.href = 'login.html';
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+  <script src="index.js"></script>
+</body>
+</html>

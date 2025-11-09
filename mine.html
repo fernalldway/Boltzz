@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Boltz - Mining</title>
+  <style>
+    :root{--bg:#010014;--card:#07061a;--neon:#b8ff00;--neon2:#b8ff00;--muted:#9aa5b1}
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial}
+    body{margin:0;min-height:100vh;background:black;}
+    .wrap{width:100%;max-width:980px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(0,213,255,0.06);border-radius:16px;padding:26px;box-shadow:0 12px 40px rgba(0,0,0,0.6); margin-bottom: 5em;}
+    .header{display:flex;align-items:center;gap:16px}
+    .logo{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;color:#001; font-weight:800; font-size:20px}
+    h1{margin:0;font-size:20px; color:White;}
+    .lead{margin:4px 0 0;color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;margin-top:18px}
+
+    /* left */
+    .stage{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+    .status-row{display:flex;align-items:center;gap:12px}
+    .big{font-size:28px;font-weight:700; color: white;}
+    .muted{color:var(--muted)}
+
+    .miner-visual{margin-top:18px;height:220px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .glow{position:absolute;inset:0;filter:blur(80px);opacity:0.2;background:radial-gradient(300px 120px at 30% 30%, rgba(0,245,160,0.14), transparent), radial-gradient(300px 120px at 75% 75%, rgba(0,212,255,0.14), transparent)}
+    .miner-icon{width:120px;height:120px;border-radius:18px;background:linear-gradient(180deg,#001 40%, #02131a);display:flex;align-items:center;justify-content:center;color:var(--neon);font-size:40px;border:1px solid rgba(0,213,255,0.12);box-shadow:0 10px 30px rgba(0,213,255,0.04) inset}
+
+    .live-meter{margin-top:14px}
+    .meter-track{height:14px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
+    .meter-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--neon2));transition:width 300ms linear}
+    .meter-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--muted)}
+
+    .actions{display:flex;gap:10px;margin-top:14px}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;background:transparent;color:var(--neon);border:1px solid rgba(0,213,255,0.12)}
+    .btn.primary{background:linear-gradient(90deg,var(--neon),var(--neon2));color:#001;border:0}
+
+    /* right */
+    .side{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+    .stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .label{font-size:13px;color:var(--muted)}
+    .value{font-weight:800}
+
+    .history{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.03)}
+    .history-item{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--muted)}
+
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr;}.logo{width:56px;height:56px}}
+     .bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--card);
+  border-top: 1px solid #ddd;
+}
+.bottom-nav a {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 12px;
+}
+.bottom-nav a.active {
+  color: var(--primary);
+}
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgb(0, 0, 0);
+    display: flex
+;
+    border-top: 1px solid #b8ff00;
+    padding: 0.5em 0;
+  }
+  .bottom-nav a {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+  }
+  .bottom-nav a.active {
+    color: #01e45f;
+  }
+  .bottom-nav svg {
+    display: block;
+    margin: 0 auto 5px;
+  }
+  .active .icon, 
+.active .text {
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #b8ff00, 0 0 10px #b8ff00;
+    filter: drop-shadow(0 0 3px #b8ff00);
+    color: #b8ff00;
+  }
+  to {
+    text-shadow: 0 0 10px #b8ff00, 0 0 20px #b8ff00;
+    filter: drop-shadow(0 0 6px #b8ff00);
+    color: #ffffff;
+  }
+}
+.create {
+  background: #b8ff00;
+    position: relative;
+    z-index: 99;
+    padding: 0.2em;
+    border-radius: 5em;
+    cursor: pointer;
+    color: white; 
+    
+}
+.create:hover {
+  background: rgb(0, 0, 0);
+  color: #b8ff00;
+  transition: 0.5s;
+}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="logo">BM</div>
+        <div>
+          <h1>Boltz — Mining</h1>
+          <div class="lead">Real-time visual accrual. ₦25,000 to start — earns ₦5,000 daily for 7 days. Auto-credit on full days.</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="stage">
+            <div class="status-row">
+              <div>
+                <div class="big" id="statusMain">Checking...</div>
+                <div class="muted" id="subStatus">Connect your wallet / sign in</div>
+              </div>
+              <div style="margin-left:auto;text-align:right">
+                <div class="muted">Daily Rate</div>
+                <div style="font-weight:800;color:var(--neon)">₦5,000</div>
+              </div>
+            </div>
+
+            <div class="miner-visual" aria-hidden>
+              <div class="glow"></div>
+              <div class="miner-icon" id="minerIcon">⛏️</div>
+            </div>
+
+            <div class="live-meter">
+              <div class="meter-track"><div class="meter-bar" id="meterBar"></div></div>
+              <div class="meter-meta"><div id="liveText">Day 0 • ₦0 live</div><div id="timeToNext" style="color: #b8ff00;">00:00:00</div></div>
+            </div>
+
+            <div class="actions" id="actions"></div>
+          </div>
+
+          <div style="margin-top:12px;text-align:center">
+            <button class="btn" id="btnRefresh">Refresh</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="side">
+            <div class="stat"><div class="label">Your Balance</div><div class="value" id="bal">₦0</div></div>
+            <div class="stat"><div class="label">Miner Cost</div><div class="value">₦25,000</div></div>
+            <div class="stat"><div class="label">Total After 7 days</div><div class="value">₦35,000</div></div>
+
+            <div class="history">
+              <div class="muted">Recent Credits</div>
+              <div id="historyList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>Boltz • Miner</footer>
+    </div>
+  </div>
+
+    <!-- Nav -->
+    <div class="bottom-nav">
+  <a href="main.html">
+    <svg width="24" height="24" fill="currentColor"><path d="M3 12l9-9 9 9v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+  Home
+  </a>
+  <a href="mine.html"  class="active">
+    <svg width="24" height="24" fill="currentColor" class="icon"><path d="M10 8.64v6.72L15 12l-5-3.36z"/><path d="M21 3H3v18h18V3zM5 19V5h14v14H5z"/></svg>
+    <span class="text">Mine</span>
+  </a>
+    <a href="create.html" style="" class="create"> 
+  <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+             10-4.48 10-10S17.52 2 12 2zm1 11h4v-2h-4V7h-2v4H7v2h4v4h2v-4z" style="color: white;"/>
+  </svg>
+  <span class="text" style="color: white;">Create</span>
+</a>
+  <a href="task.html">
+    <svg width="24" height="24" fill="currentColor" ><path d="M9 11H7v2h2v-2zm0-4H7v2h2V7zm4 4h8v2h-8v-2zm0-4h8v2h-8V7zm-4 8H7v2h2v-2zm4 0h8v2h-8v-2z"/></svg>
+    Tasks
+  </a>
+  <a href="profile.html">
+    <svg width="24" height="24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+    Profile
+  </a>
+</div>
+
+  <!-- <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, runTransaction, increment } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    // <-- Use your Firebase config (I used the config you previously provided)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDim9k5CHfNythq6ORypN_RfwyLNMuxVLs",
+      authDomain: "sign-2fd98.firebaseapp.com",
+      projectId: "sign-2fd98",
+      storageBucket: "sign-2fd98.appspot.com",
+      messagingSenderId: "548682903618",
+      appId: "1:548682903618:web:0f0ca286f902c7fbacfddb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Config (you asked: Price 25k, Daily 5k, Days 7)
+    const COST = 25000;
+    const DAILY = 5000;
+    const DURATION = 7; // days
+
+    // UI refs
+    const statusMain = document.getElementById('statusMain');
+    const subStatus = document.getElementById('subStatus');
+    const balEl = document.getElementById('bal');
+    const actions = document.getElementById('actions');
+    const meterBar = document.getElementById('meterBar');
+    const liveText = document.getElementById('liveText');
+    const timeToNext = document.getElementById('timeToNext');
+    const historyList = document.getElementById('historyList');
+    const btnRefresh = document.getElementById('btnRefresh');
+
+    let uid = null;
+    let liveInterval = null;
+
+    onAuthStateChanged(auth, async (user)=>{
+      if (!user){
+        statusMain.innerText = 'Please sign in';
+        subStatus.innerText = 'Sign in to purchase and view miner';
+        actions.innerHTML = `<button class="btn primary" onclick="location.href='login.html'">Sign In</button>`;
+        return;
+      }
+      uid = user.uid;
+      await syncAndStart();
+    });
+
+    btnRefresh.addEventListener('click', ()=>{ if (uid) syncAndStart(); });
+
+    // Core: sync miner state, credit missed payouts atomically, then start live UI
+    async function syncAndStart(){
+      clearInterval(liveInterval);
+      statusMain.innerText = 'Syncing...';
+      actions.innerHTML = '';
+      historyList.innerHTML = '';
+
+      const userRef = doc(db, 'users', uid);
+      const minerRef = doc(db, 'miners', uid);
+
+      // Ensure user doc exists
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()){
+        statusMain.innerText = 'User not found';
+        return;
+      }
+
+      // Run a transaction to compute due days and credit safely
+      try{
+        await runTransaction(db, async (t)=>{
+          const uDoc = await t.get(userRef);
+          const mDoc = await t.get(minerRef);
+
+          const uData = uDoc.exists() ? uDoc.data() : { balance:0 };
+
+          if (!mDoc.exists()){
+            // No miner yet: nothing to credit (UI will show buy option)
+            return;
+          }
+
+          const mData = mDoc.data();
+          const start = mData.startTime ? toDate(mData.startTime) : null;
+          const paidDays = mData.paidDays ?? 0;
+
+          if (!start) return;
+
+          const now = new Date();
+          const dayMs = 24*60*60*1000;
+          const elapsedDays = Math.floor((now - start)/dayMs) + 1; // day index 1..n
+          const cappedElapsed = Math.min(DURATION, Math.max(0, elapsedDays));
+          const due = Math.max(0, cappedElapsed - paidDays);
+
+          if (due > 0){
+            // credit user's balance and push history entries
+            t.update(userRef, { balance: increment(DAILY * due) });
+            const newPaid = paidDays + due;
+            const existingHistory = mData.history ?? [];
+            for (let i=0;i<due;i++){
+              existingHistory.push({ amount: DAILY, time: new Date() });
+            }
+            t.update(minerRef, { paidDays: newPaid, history: existingHistory, lastPayout: new Date() });
+          }
+        });
+      } catch(e){
+        console.error('transaction error', e);
+      }
+
+      // After transaction, load fresh data
+      const [uSnap2, mSnap2] = await Promise.all([getDoc(userRef), getDoc(minerRef)]);
+      const uData2 = uSnap2.exists() ? uSnap2.data() : { balance:0 };
+      const mData2 = mSnap2.exists() ? mSnap2.data() : null;
+
+      // update UI base values
+      balEl.innerText = `₦${formatCurrency(uData2.balance ?? 0)}`;
+
+      if (!mData2 || !mData2.startTime){
+        statusMain.innerText = 'No active miner';
+        subStatus.innerText = 'Buy a miner to start auto-mining';
+        actions.innerHTML = `<button class="btn primary" id="buyBtn">Buy Miner ₦25,000</button>`;
+        document.getElementById('buyBtn').addEventListener('click', ()=>buyMiner(uData2.balance ?? 0, userRef, minerRef));
+        meterBar.style.width = '0%';
+        liveText.innerText = `Day 0 • ₦0 live`;
+        timeToNext.innerText = `00:00:00`;
+        return;
+      }
+
+      // Miner exists
+      const start = toDate(mData2.startTime);
+      const paidDays = mData2.paidDays ?? 0;
+      const now = new Date();
+      const dayMs = 24*60*60*1000;
+      const elapsedDays = Math.floor((now - start)/dayMs) + 1; // current day index
+      const dayIndex = Math.min(elapsedDays, DURATION);
+
+      if (paidDays >= DURATION){
+        statusMain.innerText = 'Mining completed ✅';
+        subStatus.innerText = `Completed on ${toDate(mData2.lastPayout||start).toLocaleString()}`;
+        meterBar.style.width = '100%';
+        liveText.innerText = `Done • ₦${formatCurrency(DAILY * DURATION)} received`;
+        timeToNext.innerText = `00:00:00`;
+        actions.innerHTML = `<button class="btn" id="archive">Archive</button>`;
+        document.getElementById('archive').addEventListener('click', async ()=>{ await updateDoc(minerRef, { archived: true }); alert('Archived'); syncAndStart(); });
+        renderHistory(mData2.history || []);
+        return;
+      }
+
+      statusMain.innerText = `Mining Active • Day ${Math.min(dayIndex, DURATION)} / ${DURATION}`;
+      subStatus.innerText = `Started ${start.toLocaleString()}`;
+
+      // start live meter animation showing fractional progress of current daily earning
+      startLiveMeter(start, paidDays, mData2);
+
+      // actions: show claim-now (manual trigger) and stop
+      actions.innerHTML = `<button class="btn" id="stopBtn">Stop (Archive)</button> <button class="btn primary" id="claimNow">Force Claim (if due)</button>`;
+      document.getElementById('stopBtn').addEventListener('click', async ()=>{ await updateDoc(minerRef, { archived: true }); alert('Archived'); syncAndStart(); });
+      document.getElementById('claimNow').addEventListener('click', async ()=>{ await syncAndStart(); alert('Synced & claimed due payouts'); });
+
+      renderHistory(mData2.history || []);
+    }
+
+    // Live meter updater: shows fraction of the current day earning, ticks every second
+    function startLiveMeter(startTime, paidDays, minerDoc){
+      clearInterval(liveInterval);
+      liveInterval = setInterval(()=>{
+        const now = new Date();
+        const dayMs = 24*60*60*1000;
+        const elapsedMs = now - startTime;
+        const elapsedDaysFloat = elapsedMs / dayMs; // e.g., 2.43
+        const currentDayIndex = Math.floor(elapsedDaysFloat) + 1; // 1-based
+        const dayProgress = Math.min(1, elapsedDaysFloat - Math.floor(elapsedDaysFloat)); // 0..1 in current day
+
+        const fractionalEarning = Math.round(dayProgress * DAILY);
+        const pctOverall = Math.round(((paidDays + dayProgress) / DURATION) * 100);
+        meterBar.style.width = `${Math.max(2, pctOverall)}%`;
+
+        liveText.innerText = `Day ${Math.min(currentDayIndex, DURATION)} • ₦${formatCurrency(fractionalEarning)} live`;
+
+        // compute time to next full payout
+        const nextTick = new Date(startTime.getTime() + (Math.floor(elapsedDaysFloat) + 1) * dayMs);
+        const diff = nextTick - now;
+        timeToNext.innerText = msToHMS(diff > 0 ? diff : 0);
+
+        // autosync: if a full day just passed (diff < 1s) trigger sync to claim the payout
+        if (diff <= 1000){
+          syncAndStart();
+        }
+      }, 1000);
+    }
+
+    // Buy miner function: uses transaction to deduct and create miner doc
+    async function buyMiner(balance, userRef, minerRef){
+      if ((balance ?? 0) < COST) return alert('Insufficient balance');
+      try{
+        await runTransaction(db, async (t)=>{
+          const u = await t.get(userRef);
+          if (!u.exists()) throw 'User missing';
+          const uBal = u.data().balance ?? 0;
+          if (uBal < COST) throw 'Insufficient funds';
+          t.update(userRef, { balance: increment(-COST) });
+          t.set(minerRef, { startTime: new Date(), paidDays: 0, history: [], lastPayout: null, userId: uid }, { merge: true });
+        });
+        alert('Miner purchased — mining started');
+        await syncAndStart();
+      } catch(e){ console.error(e); alert('Purchase failed: '+ e); }
+    }
+
+    // helpers
+    function toDate(fireDate){
+      if (!fireDate) return null;
+      if (fireDate instanceof Date) return fireDate;
+      if (fireDate.seconds) return new Date(fireDate.seconds * 1000);
+      return new Date(fireDate);
+    }
+    function msToHMS(ms){
+      ms = Math.max(0, Math.floor(ms/1000));
+      const h = String(Math.floor(ms/3600)).padStart(2,'0');
+      const m = String(Math.floor((ms%3600)/60)).padStart(2,'0');
+      const s = String(ms%60).padStart(2,'0');
+      return `${h}:${m}:${s}`;
+    }
+    function formatCurrency(n){ try{ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }catch(e){return n} }
+
+    function renderHistory(arr){
+      historyList.innerHTML = '';
+      (arr || []).slice(-8).reverse().forEach(h=>{
+        const time = toDate(h.time || h.timestamp || h.date) || new Date();
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `<div>${time.toLocaleString()}</div><div>₦${formatCurrency(h.amount || h)}</div>`;
+        historyList.appendChild(div);
+      });
+    }
+
+    // expose for debugging
+    window._darkMiner = { syncAndStart };
+  </script> -->
+</body>
+</html>

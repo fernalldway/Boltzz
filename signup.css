@@ -1,0 +1,78 @@
+ body {
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: black;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+    }
+    .form-container {
+      background:black;
+      color:white;
+      padding:20px;
+      border-radius:8px;
+      width:90%;
+      max-width:400px;
+      
+    }
+    h2 {
+      text-align:center;
+      color: rgb(255, 255, 255);
+    }
+    input,button {
+      width: 90%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid rgb(175, 248, 175);
+    }
+    button {
+      background:lime;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      border:none;
+      display: grid;
+    justify-self: center;
+    }
+    .status {
+      margin-top:15px;
+      text-align:center;
+      font-weight:bold;
+    }
+    .acc{
+      color: white;
+    text-align: center;
+    font-size: 0.8em;
+    }
+    .form-container img{
+      width: 2em;
+    justify-self: center;
+    display: grid;
+    margin: 0;
+    }
+    .accept input,h5{
+        margin: 0;
+    }
+    .accept{
+        display: flex;
+    margin: 1em;
+    
+    }
+    .accept input{
+        width: 2em;
+        
+    }
+    .accept h5{
+        color: rgb(255, 255, 255);
+    }
+    .form-container img{
+      background: white;
+    border-radius: 0.5em;
+    }
+    a{
+        color: lime;
+    }

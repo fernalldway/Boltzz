@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boltz</title>
+<style>
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000000;
+    overflow: hidden;
+  }
+
+  .slide-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .slide {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .slide.active {
+    display: flex;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  img {
+    width: 45%;
+    max-width: 300px;
+    border-radius: 10px;
+  }
+
+  h2 {
+    font-size: 22px;
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+
+  .btn-container {
+    display: flex;
+    gap: 15px;
+  }
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .next-btn {
+    background: #b8ff00;
+    color: #fff;
+  }
+
+  .skip-btn {
+    background: #fff;
+    color: #b8ff00;
+    border: 1px solid #b8ff00;
+  }
+
+  .signup-btn {
+    background: #b8ff00;
+    color: #fff;
+  }
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 1.5rem;
+      text-align: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .overlay .message {
+      background: red;
+    padding: 2005px 383px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(255, 59, 48, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
+
+    .overlay img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .restored {
+      background: #34c759 !important;
+      animation: fadeOut 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+</style>
+</head>
+<body>
+
+ <div id="networkOverlay" class="overlay hidden">
+    <div class="message" id="networkMessage">
+      <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" alt="No Internet Icon">
+      <span>POOR INTERNET CONNECTION</span>
+    </div>
+  </div>
+
+<div class="slide-container">
+  <!-- Slide 1 -->
+  <div class="slide active">
+    <img src="undraw_welcome-cats_tw36.svg" alt="Welcome Image">
+    <h2>Welcome to Boltz</h2>
+    <div class="btn-container">
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide">
+    <img src="undraw_completed-tasks_1j9z.svg" alt="Earn Easily">
+    <h2>Earn Easily with Boltz</h2>
+    <div class="btn-container">
+      <button class="skip-btn" onclick="skipSlides()">Skip</button>
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>
+
+   <!-- Slide 3 -->
+  <div class="slide">
+    <img src="undraw_construction-workers_z99i.svg" alt="Earn Easily">
+    <h2>Create Your Own Task</h2>
+    <div class="btn-container">
+      <button class="skip-btn" onclick="skipSlides()">Skip</button>
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>
+
+   <!-- Slide 4 -->
+  <div class="slide">
+    <img src="undraw_conversation_15p8.svg" alt="Earn Easily">
+    <h2>Invite Fiends To Join</h2>
+    <div class="btn-container">
+      <button class="skip-btn" onclick="skipSlides()">Skip</button>
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>
+
+     <!-- Slide 5 -->
+  <div class="slide">
+    <img src="undraw_digital-currency_u5p6.svg" alt="Earn Easily">
+    <h2>Get Latest Cryprocurrency News</h2>
+    <div class="btn-container">
+      <button class="skip-btn" onclick="skipSlides()">Skip</button>
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>  
+
+   <!-- Slide 6 -->
+  <div class="slide">
+    <img src="undraw_printing-invoices_osgs.svg" alt="Earn Easily">
+    <h2>Withdraw with Ease</h2>
+    <div class="btn-container">
+      <button class="skip-btn" onclick="skipSlides()">Skip</button>
+      <button class="next-btn" onclick="nextSlide()">Next</button>
+    </div>
+  </div>  
+
+  <!-- Slide 3 (Final) -->
+  <div class="slide">
+    <img src="undraw_sign-up_qamz.svg" alt="Sign Up">
+    <h2>Ready to Sign Up?</h2>
+    <div class="btn-container">
+      <button class="signup-btn" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
+  }
+
+  function nextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function skipSlides() {
+    currentSlide = slides.length - 1;
+    showSlide(currentSlide);
+  }
+</script>
+<script src="index.js"></script>
+</body>
+</html>

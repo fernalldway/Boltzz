@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Task - Skyline</title>
+<style>
+  :root {
+    --primary: #01e45f;
+    --light: #f4f4f4;
+  }
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #081023;
+    color: #01e45f;
+  }
+  .container {
+    max-width: 500px;
+    margin: 30px auto;
+    background: #081023;
+    padding: 25px;
+    border-radius: 12px;
+   
+  }
+  h2 {
+    text-align: center;
+    color: var(--primary);
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  input, select, textarea, button {
+    width: 90%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  .status {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left:0;
+    width: 100%;
+    background: black;
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+  .bottom-nav a {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+  }
+  .bottom-nav a.active {
+    color: #08a88a;
+  }
+  .bottom-nav svg {
+    display: block;
+    margin: 0 auto 5px;
+  }
+  @media (max-width: 500px){
+    
+  }
+  /* Base styling for the pop-up container */
+        .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      display: none;
+    }
+
+    .popup-content {
+      background: black;
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .popup-content h2 {
+      margin-top: 0;
+      color: #01e45f;
+    }
+
+    .popup-content button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .join-btn {
+      background-color: #01e45f;
+      color: white;
+    }
+
+    .close-btn {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .popup-content i{
+      color: red;
+    }
+    button:hover{
+      background-color: black;
+      transition: 0.3s;
+      opacity: 90%;
+      animation-duration: 10s;
+    }
+    .active .icon, 
+.active .text {
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #01e45f, 0 0 10px #01e45f;
+    filter: drop-shadow(0 0 3px #01e45f);
+    color: #01e45f;
+  }
+  to {
+    text-shadow: 0 0 10px #01e45f, 0 0 20px #01e45f;
+    filter: drop-shadow(0 0 6px #01e45f);
+    color: #ffffff;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>📃Create Task</h2>
+
+  <form id="createForm" action="https://formsubmit.co/hustlepay02@gmail.com" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="New Task Create from HustlePay">
+    <input type="hidden" name="uid" id="userUid" />
+    <input type="hidden" name="email" id="userEmail" />
+    <input type="hidden" name="price" id="price" />
+    <input type="hidden" name="currentBalance" id="currentBalance" />
+
+    <label for="taskType" Select Task Type></label>
+    <select name="taskType" id="taskType" style="width: 97.1%;" required>
+      <option value="" >-- Select Task --</option>
+      <option value="Whatsapp Connecting Task">Whatsapp Connecting Task - ₦5,000</option>
+      <option value="Whatsapp Group Join Task">Whatsapp Group Join Task - ₦1,000</option>
+      <option value="Whatsapp Channel Join Task">Whatsapp Channel Join Task - ₦2,000</option>
+      <option value="Tiktok Follow Task">Tiktok Follow Task - ₦3,500</option>
+      <option value="Instagram Follow Task">Instagram Follow Task - ₦2,100</option>
+      <option value="Facebook Follow Task">Facebook Follow Task - ₦1,300</option>
+    </select>
+    <label for="taskLink">Your Email<label>
+    <input type="email" name="Email" placeholder="Enter your HustlePay Email address" required />
+
+    <label for="description">Task Description</label>
+    <textarea name="description" id="description" rows="3" placeholder="Tell us about your task..." required></textarea>
+
+    <label for="taskLink">Task Link</label>
+    <input type="url" name="taskLink" id="taskLink"  required />
+
+    <label>Upload Image 1</label>
+    <input type="file" name="image1" accept="image/*" required />
+
+    <label>Upload Image 2</label>
+    <input type="file" name="image2" accept="image/*" required />
+
+    <button type="submit" id="submitBtn">Submit Task</button>
+
+    <div class="status" id="statusMsg"></div>
+  </form>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>Upload Task</h2>
+    <p> You can create your own task in this page,after submitting your task form, you will be taken to the formsubmit page, Make sure You verify the Formsubmit page to Submit your Task proof successfully. <br> <i>Note, Uploading some tasks may take up to 24hrs before it get approved. We will notify you when your task is approved.</i> Thanks for using HustlePay.</p>
+    <button class="join-btn" onclick="joinNow()">Join</button>
+    <button class="close-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>Join Us Now!</a></h2>
+   
+    <button><a href="https://whatsapp.com/channel/0029Vb6e6hfCHDysaroNsw3j" style="color: white; text-decoration: none;">Join</a></button>
+    <button class="close-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+
+<div class="bottom-nav">
+  <a href="dashboard.html">
+    <svg width="24" height="24" fill="currentColor"><path d="M3 12l9-9 9 9v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+    Home
+  </a>
+  <a href="videos.html">
+    <svg width="24" height="24" fill="currentColor"><path d="M10 8.64v6.72L15 12l-5-3.36z"/><path d="M21 3H3v18h18V3zM5 19V5h14v14H5z"/></svg>
+    Videos
+  </a>
+    <a href="create.html"  class="active"> 
+  <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="icon">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+             10-4.48 10-10S17.52 2 12 2zm1 11h4v-2h-4V7h-2v4H7v2h4v4h2v-4z"/>
+  </svg>
+  <span class="text">Create</span>
+</a>
+  <a href="tasks.html" >
+    <svg width="24" height="24" fill="currentColor"><path d="M9 11H7v2h2v-2zm0-4H7v2h2V7zm4 4h8v2h-8v-2zm0-4h8v2h-8V7zm-4 8H7v2h2v-2zm4 0h8v2h-8v-2z"/></svg>
+    Tasks
+  </a>
+  <a href="profile.html">
+    <svg width="24" height="24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+    Profile
+  </a>
+</div>
+
+<script src="create.js"></script>
+<!-- Firebase SDK -->
+<script type="module" src="creates.js"></script>
+
+
+</body>
+</html>
